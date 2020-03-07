@@ -8,9 +8,9 @@ A collection of libraries for [enterprise microservices](https://github.com/Step
 - names modules by what they do
 - unlike Spring Boot avoids certain types of auto-magical behaviour
 - is not a library monolith, that is every part only depends on the api parts of the other components
-  at most, and the api parts do not add any dependencies.  
+  (if at all), and the api parts do not add any dependencies.
 
-Fall is my favourite season, so I'm calling it go-autumn.
+Fall is my favourite season, so I'm calling it _go-autumn_.
 
 ## About go-autumn-config
 
@@ -38,7 +38,7 @@ When you request your configuration to be loaded, which you must do yourself wit
  - command line flag
  - environment variable
  - configuration read from secrets.(yaml|json|properties)
- - configuration read from each config-profileName.(yaml|json|properties|...) in reverse order, so the last profile wins 
+ - configuration read from each config-profileName.(yaml|json|properties) in reverse order, so the last profile wins 
    (NOT IMPLEMENTED YET)
  - configuration read from config.(yaml|json|properties)
  - default value specified in ConfigItems
@@ -50,8 +50,13 @@ The whole library is really just a thin wrapper around [spf13/viper](https://git
 [spf13/pflag](https://github.com/spf13/pflag). Once loaded, you access your configuration values simply
 using the viper primitives such as `viper.GetString()`. 
 
-The library will always add two extra GNU flags style command line parameters called `-config-path` and `-secrets-path`. 
-If unset, these default to the current working directory. They contain the path to two configuration files which must be
+The library will always add two extra GNU flags style command line parameters called `config-path` and `secrets-path`. 
+If unset, these default to the current working directory, but they will log a warning, because you should set those
+in production. 
+
+```main --config-path=. --secrets-path=.```
+
+Will get rid of the warnings. These parameters contain the path to two configuration files which must be
 called `config.(yaml|json|properties)` and `secrets.(yaml|json|properties)`.
 
 We have found that a good use pattern is to have a file called `access.go` inside your configuration
@@ -110,3 +115,7 @@ func ServerAddress() string {
 }
 ```
 
+## TODOs
+
+- add unit tests
+- push mini example with a ContextLoads acceptance test to separate repo and link it here
