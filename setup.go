@@ -28,7 +28,7 @@ func Setup(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, 
 	initializeFlags()
 	pflag.Parse()
 
-	SetupDefaults()
+	setupDefaults()
 	setupEnv()
 	setupFlags()
 }
@@ -36,6 +36,15 @@ func Setup(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, 
 func Load() {
 	performLoad()
 	validate()
+}
+
+// use this for unit tests
+func SetupDefaultsOnly(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, warnFunc auconfigapi.ConfigWarnFunc) {
+	configItems = items
+	failFunction = failFunc
+	warnFunction = warnFunc
+
+	setupDefaults()
 }
 
 func initializeFlags() {
@@ -98,8 +107,7 @@ func bindFlag(key string, flagname string) {
 	}
 }
 
-// exposed so you can write tests with just defaults set
-func SetupDefaults() {
+func setupDefaults() {
 	for _, item := range configItems {
 		viper.SetDefault(item.Key, item.Default)
 	}
