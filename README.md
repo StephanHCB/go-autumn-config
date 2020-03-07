@@ -30,7 +30,7 @@ You configure the configuration subsystem by a call to `auconfig.Setup(...)`. Th
    using your preferred logging framework. `log.Print` satisfies the type requirements, but again we
    hope this is not what you'll use in production...
 
-See [go-autumn-config-api](https://github.com/StephanHCB/go-autumn-config-api/api.go) for the precise
+See [go-autumn-config-api](https://github.com/StephanHCB/go-autumn-config-api/blob/master/api.go) for the precise
 type definitions.
 
 When you request your configuration to be loaded, which you must do yourself with a call to 
