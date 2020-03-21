@@ -141,7 +141,7 @@ func validate() {
 	for _, item := range configItems {
 		err := item.Validate(item.Key)
 		if err != nil {
-			fail(err)
+			failFunction(err)
 		}
 	}
 }
