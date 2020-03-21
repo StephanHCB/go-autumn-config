@@ -21,24 +21,18 @@ var configItemKeysWithNoFlags = map[string]bool{}
 
 // initialize configuration with full setup - you need to call this from your code
 func Setup(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, warnFunc auconfigapi.ConfigWarnFunc) {
-	configItems = items
-	failFunction = failFunc
-	warnFunction = warnFunc
-
-	initializeFlags()
-	pflag.Parse()
-
-	setupDefaults()
-	setupEnv()
-	setupFlags()
+	SetupWithOverriddenConfigPath(items, failFunc, warnFunc, "", "")
 }
 
+// load any configuration files - you need to call this from your code after calling Setup()
 func Load() {
 	performLoad()
 	validate()
 }
 
-// use this for unit tests
+// use this for unit tests.
+//
+// This just sets all configuration settings to their default values. No need to call Load() after this.
 func SetupDefaultsOnly(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, warnFunc auconfigapi.ConfigWarnFunc) {
 	configItems = items
 	failFunction = failFunc
@@ -47,9 +41,26 @@ func SetupDefaultsOnly(items []auconfigapi.ConfigItem, failFunc auconfigapi.Conf
 	setupDefaults()
 }
 
-func initializeFlags() {
-	pflag.StringVar(&configPath, "config-path", "", "config file path without file name")
-	pflag.StringVar(&secretsPath, "secrets-path", "", "secrets file path without file name")
+// use this for integration tests instead of Setup().
+//
+// This allows you to specify a default path for both config and secrets files, avoiding the need for command line parameters in integration tests.
+// You still need to call Load(). Set defaultSecretsPath to "" to disable loading it.
+func SetupWithOverriddenConfigPath(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, warnFunc auconfigapi.ConfigWarnFunc, defaultConfigPath string, defaultSecretsPath string) {
+	configItems = items
+	failFunction = failFunc
+	warnFunction = warnFunc
+
+	initializeFlags(defaultConfigPath, defaultSecretsPath)
+	pflag.Parse()
+
+	setupDefaults()
+	setupEnv()
+	setupFlags()
+}
+
+func initializeFlags(defaultConfigPath string, defaultSecretsPath string) {
+	pflag.StringVar(&configPath, "config-path", defaultConfigPath, "config file path without file name")
+	pflag.StringVar(&secretsPath, "secrets-path", defaultSecretsPath, "secrets file path without file name")
 
 	for _, item := range configItems {
 		flagname := item.FlagName
