@@ -58,6 +58,16 @@ func SetupWithOverriddenConfigPath(items []auconfigapi.ConfigItem, failFunc auco
 	setupFlags()
 }
 
+// use this in unit or integration tests before calling any variant of Setup()
+//
+// resets all internal state
+func ResetForTesting() {
+	// allow re-definition of flags because this naturally happens in tests and disables panic() on errors
+	pflag.CommandLine = pflag.NewFlagSet("integration_testing", pflag.ContinueOnError)
+	// resets all configuration
+	viper.Reset()
+}
+
 func initializeFlags(defaultConfigPath string, defaultSecretsPath string) {
 	pflag.StringVar(&configPath, "config-path", defaultConfigPath, "config file path without file name")
 	pflag.StringVar(&secretsPath, "secrets-path", defaultSecretsPath, "secrets file path without file name")
