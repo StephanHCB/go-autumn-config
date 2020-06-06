@@ -44,7 +44,7 @@ func SetupDefaultsOnly(items []auconfigapi.ConfigItem, failFunc auconfigapi.Conf
 // use this for integration tests instead of Setup().
 //
 // This allows you to specify a default path for both config and secrets files, avoiding the need for command line parameters in integration tests.
-// You still need to call Load(). Set defaultSecretsPath to "" to disable loading it.
+// You still need to call Load(). Set defaultSecretsPath to "" to disable loading a secrets file.
 func SetupWithOverriddenConfigPath(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, warnFunc auconfigapi.ConfigWarnFunc, defaultConfigPath string, defaultSecretsPath string) {
 	configItems = items
 	failFunction = failFunc
@@ -89,6 +89,8 @@ func initializeFlags(defaultConfigPath string, defaultSecretsPath string) {
 			pflag.Int16(flagname, 0, item.Description)
 		} else if _, ok := item.Default.(int32); ok {
 			pflag.Int32(flagname, 0, item.Description)
+		} else if _, ok := item.Default.(int64); ok {
+			pflag.Int64(flagname, 0, item.Description)
 		} else if _, ok := item.Default.(uint); ok {
 			pflag.Uint(flagname, 0, item.Description)
 		} else if _, ok := item.Default.(uint8); ok {
@@ -97,13 +99,15 @@ func initializeFlags(defaultConfigPath string, defaultSecretsPath string) {
 			pflag.Uint16(flagname, 0, item.Description)
 		} else if _, ok := item.Default.(uint32); ok {
 			pflag.Uint32(flagname, 0, item.Description)
+		} else if _, ok := item.Default.(uint64); ok {
+			pflag.Uint64(flagname, 0, item.Description)
 		} else if _, ok := item.Default.(bool); ok {
 			pflag.Bool(flagname, false, item.Description)
 		} else if _, ok := item.Default.([]string); ok {
 			pflag.StringSlice(flagname, []string{}, item.Description)
 		} else {
 			configItemKeysWithNoFlags[item.Key] = true
-			warnFunction(fmt.Sprintf("unsupported data type for config item %v, cannot initialize command line argument, skipping this key", item.Key))
+			// warnFunction(fmt.Sprintf("unsupported data type for config item %v, cannot initialize command line argument, skipping this key", item.Key))
 		}
 	}
 }
