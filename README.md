@@ -43,6 +43,16 @@ When you request your configuration to be loaded, which you must do yourself wit
  - configuration read from config.(yaml|json|properties)
  - default value specified in ConfigItems
 
+When declaring `auconfigapi.ConfigItem`, you can override both the environment variable and the flag name, but if
+you do not override them:
+ - the environment variable will be called `CONFIG_{Key with non-[a-z0-9] replaced by _}`, note that key is NOT 
+   capitalized like it would be in Spring. _Example:_ If the key is `server.name`, the default environment
+   variable is called `CONFIG_server_name`.
+ - the command line flag is called the same as the key. Unless you do weird things with your key names, this
+   will work as expected. If you do want odd keys, for example in order to match an existing yaml structure,
+   you will need to specify the flag name. Note again that the default flag name is not capitalized or transformed in
+   any way.
+
 **Important:** avoid calling `Setup(...)` or `Load()` from inside an `init()` func, or you might get errors if another
 library defines any command line parameters using flag or pflag. Setup calls `pflag.Parse()`!
 
