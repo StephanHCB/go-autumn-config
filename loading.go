@@ -2,6 +2,7 @@ package auconfig
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -13,16 +14,22 @@ func performLoad() {
 		warnFunction("you did not provide the config-path command line flag. Falling back to looking for config.(yaml|json) in current directory.")
 		configPath = "."
 	}
-	viper.SetConfigName(configFileName)
-	viper.AddConfigPath(configPath)
-	handleLoadingError(viper.ReadInConfig(), configFileName, configPath, false)
+	performLoadIfPathsSet()
+	if secretsPath == "" {
+		warnFunction("you did not provide the secrets-path command line flag. No secrets file will be loaded. This may be ok on a local machine.")
+	}
+}
 
+func performLoadIfPathsSet() {
+	if configPath != "" {
+		viper.SetConfigName(configFileName)
+		viper.AddConfigPath(configPath)
+		handleLoadingError(viper.ReadInConfig(), configFileName, configPath, false)
+	}
 	if secretsPath != "" {
 		viper.SetConfigName(secretsFileName)
 		viper.AddConfigPath(secretsPath)
 		handleLoadingError(viper.MergeInConfig(), secretsFileName, secretsPath, true)
-	} else {
-		warnFunction("you did not provide the secrets-path command line flag. No secrets file will be loaded. This may be ok on a local machine.")
 	}
 }
 

@@ -2,11 +2,12 @@ package auconfig
 
 import (
 	"fmt"
+	"log"
+	"regexp"
+
 	"github.com/StephanHCB/go-autumn-config-api"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"log"
-	"regexp"
 )
 
 var configPath string
@@ -24,9 +25,17 @@ func Setup(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, 
 	SetupWithOverriddenConfigPath(items, failFunc, warnFunc, "", "")
 }
 
-// load any configuration files - you need to call this from your code after calling Setup()
+// Load reads configuration files - you need to call this from your code after calling Setup()
 func Load() {
 	performLoad()
+	validate()
+}
+
+// LoadAllowMissingPaths is an alternate version of Load() that will not complain if the command line flags
+// config-path and secrets-path are unset. Instead, it will silently skip loading configuration files for which
+// no path was provided and instead rely completely on environment variables and command line flags.
+func LoadAllowMissingPaths() {
+	performLoadIfPathsSet()
 	validate()
 }
 
