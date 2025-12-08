@@ -1,0 +1,11 @@
+string-key-no-default: hello world
+map-key:
+  lion: roar
+  cat: meow
+string-slice-key:
+  - a
+  - b
+  - c
+  # careful, these need to be quoted because in YAML they default to boolean
+  - 'yes'
+  - 'no'

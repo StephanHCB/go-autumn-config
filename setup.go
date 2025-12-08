@@ -20,7 +20,8 @@ var configItems []auconfigapi.ConfigItem
 
 var configItemKeysWithNoFlags = map[string]bool{}
 
-// initialize configuration with full setup - you need to call this from your code
+// Setup initializes configuration with full setup - you need to call this from your code,
+// followed by Load() or LoadAllowMissingPaths().
 func Setup(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, warnFunc auconfigapi.ConfigWarnFunc) {
 	SetupWithOverriddenConfigPath(items, failFunc, warnFunc, "", "")
 }
@@ -39,7 +40,7 @@ func LoadAllowMissingPaths() {
 	validate()
 }
 
-// use this for unit tests.
+// SetupDefaultsOnly is available for unit tests.
 //
 // This just sets all configuration settings to their default values. No need to call Load() after this.
 func SetupDefaultsOnly(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, warnFunc auconfigapi.ConfigWarnFunc) {
@@ -50,10 +51,15 @@ func SetupDefaultsOnly(items []auconfigapi.ConfigItem, failFunc auconfigapi.Conf
 	setupDefaults()
 }
 
-// use this for integration tests instead of Setup().
+// SetupWithOverriddenConfigPath is available for integration tests instead of Setup().
 //
-// This allows you to specify a default path for both config and secrets files, avoiding the need for command line parameters in integration tests.
+// This allows you to specify a default path for both config and secrets files, avoiding the need for setting command
+// line parameters in integration tests, but still loading real (test) configuration files.
+//
 // You still need to call Load(). Set defaultSecretsPath to "" to disable loading a secrets file.
+//
+// If using LoadAllowMissingPaths() instead, you can set both paths to "" to disable loading config and secrets files
+// without causing an error.
 func SetupWithOverriddenConfigPath(items []auconfigapi.ConfigItem, failFunc auconfigapi.ConfigFailFunc, warnFunc auconfigapi.ConfigWarnFunc, defaultConfigPath string, defaultSecretsPath string) {
 	configItems = items
 	failFunction = failFunc
@@ -67,7 +73,7 @@ func SetupWithOverriddenConfigPath(items []auconfigapi.ConfigItem, failFunc auco
 	setupFlags()
 }
 
-// use this in unit or integration tests before calling any variant of Setup()
+// ResetForTesting is available for unit or integration tests before calling any variant of Setup().
 //
 // resets all internal state
 func ResetForTesting() {
