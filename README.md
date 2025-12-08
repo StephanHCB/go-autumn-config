@@ -211,6 +211,19 @@ some:
       token: 'value for struct field InitialToken, but we mapped the yaml key to hello.token'
 ```
 
-## TODOs
+The library has almost complete test coverage, the test code should give you even more examples.
 
-- add unit tests
+## Working without a configuration file
+
+There are variants of `Setup()` and `Load()` for specific situations, such as during test execution.
+ - `SetupDefaultsOnly()` sets all configuration values to their default values. No need to call any of the `Load()`
+   variants after this. Useful for unit tests.
+ - `SetupWithOverriddenConfigPath()` allows specifying the default paths for configuration and secret files. You still
+   need to call a `Load()` variant afterwards.
+ - `LoadAllowMissingPaths()` will not fail if the configuration file cannot be found. Especially useful together 
+   with `SetupWithOverriddenConfigPath()` if you set both paths to the empty string, which completely skips 
+   attempting to load configuration files. _Note: this may not be what you want, as you may be forcing developers 
+   to locally set environment variables or command line switches, which is painful in most IDEs._  
+
+Finally, `ResetForTesting()` can be used to reset the internal viper and pflag data structures so the application 
+does not panic due to loading configuration multiple times.
