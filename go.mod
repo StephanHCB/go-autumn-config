@@ -3,7 +3,7 @@ module github.com/StephanHCB/go-autumn-config
 go 1.23.0
 
 require (
-	github.com/StephanHCB/go-autumn-config-api v0.2.1
+	github.com/StephanHCB/go-autumn-config-api v0.2.2
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
